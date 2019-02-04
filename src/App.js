@@ -1,25 +1,37 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import MoonComponent from './components/MoonComponent'
 
 class App extends Component {
+
+  state = {
+      currentMp: []
+    }
+
+
+    // get current moon phase
+    async componentDidMount() {
+      const ts = await Math.round((new Date()).getTime() / 1000)
+      const response = await fetch(`http://api.farmsense.net/v1/moonphases/?d=${ts}`)
+      const json = await response.json()
+        console.log(json)
+    this.setState({currentMp: json} )
+    console.log(this.state.currentMp)
+  }
+
+  moonData = () => {
+    return this.state.currentMp.map((p, i) =>{
+      return <MoonComponent {...p} key={i} />
+    })
+  }
+
+
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      {this.moonData()}
+
       </div>
     );
   }
